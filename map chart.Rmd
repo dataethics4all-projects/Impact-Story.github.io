@@ -1,0 +1,32 @@
+---
+title:
+author: 
+date: 
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(tidyverse)
+library(leaflet)
+library(readxl)
+data <- read_excel("My_Country_Data.xlsx")
+data$long <- as.numeric(data$long)
+data$lat <- as.numeric(data$lat)
+```
+
+```{r echo=FALSE}
+data %>% 
+leaflet(options = leafletOptions(zoomControl = TRUE,minZoom = 1.5, maxZoom = 5)) %>%
+addProviderTiles(providers$Esri.WorldImagery, group = "World Imagery") %>%
+addProviderTiles(providers$Esri.WorldTopoMap, group = "WorldTopoMap") %>%
+addProviderTiles("Stamen.Watercolor") %>%
+addProviderTiles("Stamen.TonerHybrid") %>%
+addLayersControl(baseGroups = c("World TopoMap", "World Imagery")) %>%
+addMarkers(lng = ~long, lat = ~lat,label = data$Country, 
+           popup = ifelse(data$Membership == "Yes",data$Country, "No Members")) 
+```
+
